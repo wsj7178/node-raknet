@@ -5,7 +5,10 @@ var debug = require('debug')("raknet");
 
 var createSerializer = require("./transforms/serializer").createSerializer;
 var createDeserializer = require("./transforms/serializer").createDeserializer;
+var ProtoDef = require('protodef').ProtoDef;
 var split = require('split-buffer');
+var Serializer = require('protodef').Serializer;
+var Parser = require('protodef').Parser;
 
 class Client extends EventEmitter
 {
@@ -16,6 +19,11 @@ class Client extends EventEmitter
     this.port=port;
     this.parser=createDeserializer(true);
     this.serializer=createSerializer(true);
+    var proto = new ProtoDef();
+    proto.addTypes(require('./datatypes/raknet'));
+    proto.addTypes(require('../data/protocol.json'));
+    this.encapsulatedPacketParser=new Parser(proto, 'encapsulated_packet');
+    this.encapsulatedPacketSerializer=new Serializer(proto, 'encapsulated_packet');
     this.sendSeqNumber=0;
     this.messageIndex=0;
     this.splitId=0;
@@ -103,7 +111,7 @@ class Client extends EventEmitter
   {
     try {
       debug("handle encapsulated",buffer);
-      var r = this.parser.parsePacketBuffer(buffer);
+      var r = this.encapsulatedPacketParser.parsePacketBuffer(buffer);
       this.emitPacket(r);
     }
     catch(err) {
@@ -123,7 +131,7 @@ class Client extends EventEmitter
 
   writeEncapsulated(name, params,priority) {
     priority=priority||4;
-    const buffer=this.serializer.createPacketBuffer({ name, params });
+    const buffer=this.encapsulatedPacketSerializer.createPacketBuffer({ name, params });
 
     if(buffer.length>this.mtuSize) {
       const buffers = split(buffer, this.mtuSize);

@@ -604,6 +604,61 @@
       }
     ]
   ],
+  "encapsulated_packet":[
+    "container",
+    [
+      {
+        "name": "name",
+        "type": [
+          "mapper",
+          {
+            "type": "u8",
+            "mappings": {
+              "0x00": "ping",
+              "0x01": "unconnected_ping",
+              "0x02": "unconnected_ping_open_connections",
+              "0x03": "pong",
+              "0x05": "open_connection_request_1",
+              "0x06": "open_connection_reply_1",
+              "0x07": "open_connection_request_2",
+              "0x08": "open_connection_reply_2",
+              "0x09": "client_connect",
+              "0x10": "server_handshake",
+              "0x13": "client_handshake",
+              "0x15": "client_disconnect",
+              "0x1c": "unconnected_pong",
+              "0x1d": "advertise_system"
+            }
+          }
+        ]
+      },
+      {
+        "name": "params",
+        "type": [
+          "switch",
+          {
+            "compareTo": "name",
+            "fields": {
+              "advertise_system": "packet_advertise_system",
+              "client_connect": "packet_client_connect",
+              "client_disconnect": "packet_client_disconnect",
+              "client_handshake": "packet_client_handshake",
+              "open_connection_reply_1": "packet_open_connection_reply_1",
+              "open_connection_reply_2": "packet_open_connection_reply_2",
+              "open_connection_request_1": "packet_open_connection_request_1",
+              "open_connection_request_2": "packet_open_connection_request_2",
+              "ping": "packet_ping",
+              "pong": "packet_pong",
+              "server_handshake": "packet_server_handshake",
+              "unconnected_ping": "packet_unconnected_ping",
+              "unconnected_ping_open_connections": "packet_unconnected_ping_open_connections",
+              "unconnected_pong": "packet_unconnected_pong"
+            }
+          }
+        ]
+      }
+    ]
+  ],
   "packet": [
     "container",
     [

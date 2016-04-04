@@ -22,4 +22,4 @@ function createDeserializer() {
 module.exports = {
   createDeserializer: createDeserializer,
   createSerializer: createSerializer
-}
+};
