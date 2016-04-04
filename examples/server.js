@@ -9,3 +9,9 @@ var server = raknet.createServer({
   host: process.argv[2],
   port: parseInt(process.argv[3])
 });
+
+server.on("connection",client => {
+  client.on("login",() => {
+    console.log("A client has login");
+  })
+});

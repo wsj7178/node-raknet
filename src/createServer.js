@@ -51,6 +51,10 @@ function createServer(options) {
       },0)
     });
 
+    client.on("client_handshake",packet => {
+      client.emit("login");
+    });
+
     client.on("ping",packet => {
       client.writeEncapsulated("pong",{
         "pingID":packet.pingID

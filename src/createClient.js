@@ -64,6 +64,7 @@ function createClient(options) {
           { version: 4, address: client.socket.address().address, port: /*client.socket.address().port*/12345/*TODO fix this*/ }
         ]
       });
+      client.emit("login");
     })
   }
 

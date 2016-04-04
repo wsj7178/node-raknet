@@ -15,6 +15,11 @@ client.on('connect', function() {
   console.info('connected');
 });
 
+
+client.on("login",() => {
+  console.log("login");
+});
+
 client.on('error',function(err){
   console.log(err);
 });
