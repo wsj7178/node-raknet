@@ -36,11 +36,12 @@ function createClient(options) {
       mtuSize:new Buffer(1446).fill(0)
     });
 
-    client.on('open_connection_reply_1', function() {
+    client.on('open_connection_reply_1', packet => {
+      client.mtuSize=packet.mtuSize;
       client.write('open_connection_request_2', {
         magic:0,
         serverAddress:{ version: 4, address: client.address, port: client.port },
-        mtuSize:1426,
+        mtuSize:packet.mtuSize,
         clientID:[ 339724, -6627870 ]
       });
     });

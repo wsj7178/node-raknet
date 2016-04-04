@@ -22,6 +22,7 @@ Create a client. options :
 Create a server. options :
 * host
 * port
+* name (optional)
 
 ### createSerializer()
 
