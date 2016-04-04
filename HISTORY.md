@@ -1,3 +1,9 @@
+## 1.4.0
+
+* split/merge encapsulated packet
+* handle unconnected ping
+* doc
+
 ## 1.3.1
 
 * add unknown field to unconnected_ping
