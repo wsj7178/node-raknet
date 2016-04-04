@@ -1,3 +1,7 @@
+## 1.5.1
+
+* put protocol.json in types to fit protodef standard json
+
 ## 1.5.0
 
 * add custom packet handling
