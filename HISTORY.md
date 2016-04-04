@@ -1,3 +1,7 @@
+## 1.5.0
+
+* add custom packet handling
+
 ## 1.4.0
 
 * split/merge encapsulated packet
