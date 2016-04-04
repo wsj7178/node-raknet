@@ -6,7 +6,7 @@ function createProtocol() {
   var proto = new ProtoDef();
 
   proto.addTypes(require('../datatypes/raknet'));
-  proto.addTypes(require('../../data/protocol.json'));
+  proto.addTypes(require('../../data/protocol.json').types);
   
   return proto;
 }
