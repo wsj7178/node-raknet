@@ -7,8 +7,6 @@ var createSerializer = require("./transforms/serializer").createSerializer;
 var createDeserializer = require("./transforms/serializer").createDeserializer;
 var split = require('split-buffer');
 
-const mtuSize=1426;
-
 class Client extends EventEmitter
 {
   constructor(port,address)
@@ -20,6 +18,10 @@ class Client extends EventEmitter
     this.serializer=createSerializer(true);
     this.parserEncapsulated=createDeserializer(true);
     this.sendSeqNumber=0;
+    this.messageIndex=0;
+    this.splitId=0;
+    this.mtuSize=548;
+    this.splitPackets=[];
     this.setErrorHandling();
   }
 
@@ -95,8 +97,22 @@ class Client extends EventEmitter
       emitPacket(parsed);
       if(parsed.metadata.name.substr(0,11)=="data_packet")
       {
-        var encapsulatedPackets=parsed.data.encapsulatedPackets;
-        encapsulatedPackets.forEach((encapsulatedPacket) => this.parserEncapsulated.write(encapsulatedPacket.buffer));
+        const encapsulatedPackets=parsed.data.encapsulatedPackets;
+        encapsulatedPackets.forEach((encapsulatedPacket) => {
+          if(encapsulatedPacket.hasSplit) {
+            if (!this.splitPackets[encapsulatedPacket.splitID])
+              this.splitPackets[encapsulatedPacket.splitID] = [];
+            this.splitPackets[encapsulatedPacket.splitID][encapsulatedPacket.splitIndex] = encapsulatedPacket.buffer;
+
+            if (encapsulatedPacket.count == this.splitPackets[encapsulatedPacket.splitID].length) {
+              let buffer = this.splitPackets[encapsulatedPacket.splitID].reduce((acc, bufferPart) => Buffer.concat(acc, bufferPart), new Buffer(0));
+              delete this.splitPackets[encapsulatedPacket.splitID];
+              this.parserEncapsulated.write(buffer);
+            }
+          }
+          else
+            this.parserEncapsulated.write(encapsulatedPacket.buffer);
+        });
         this.write("ack",{"packets":[{"one":1,"values":parsed.data.seqNumber}]})
       }
     });
@@ -113,28 +129,48 @@ class Client extends EventEmitter
   writeEncapsulated(name, params,priority) {
     priority=priority||4;
     const buffer=this.serializer.createPacketBuffer({ name, params });
-    const buffers = split(buffer, mtuSize);
+    
+    if(buffer.length>mtuSize) {
+      const buffers = split(buffer, mtuSize);
 
-    buffers.forEach(bufferPart => {
-      this.write("data_packet_"+priority,{
-        seqNumber: this.sendSeqNumber,
-        encapsulatedPackets:[{
-          reliability: 2,
-          hasSplit: 0,
-          identifierACK: undefined,
-          messageIndex: 0,
-          orderIndex: undefined,
-          orderChannel: undefined,
-          splitCount: undefined,
-          splitID: undefined,
-          splitIndex: undefined,
-          buffer:bufferPart
-        }]
+      buffers.forEach((bufferPart, index) => {
+        this.write("data_packet_" + priority, {
+          seqNumber: this.sendSeqNumber,
+          encapsulatedPackets: [{
+            reliability: 2,
+            hasSplit: 1,
+            identifierACK: undefined,
+            messageIndex: this.messageIndex,
+            orderIndex: undefined,
+            orderChannel: undefined,
+            splitCount: buffers.length,
+            splitID: this.splitId,
+            splitIndex: index,
+            buffer: bufferPart
+          }]
+        });
+        debug("writing packet " + name);
+        debug(params);
+        this.sendSeqNumber++;
       });
-      debug("writing packet " + name);
-      debug(params);
-      this.sendSeqNumber++;
-    });
+      this.splitId++;
+      this.splitId = this.splitId % 65536;
+    }
+    else {
+        this.write("data_packet_" + priority, {
+          seqNumber: this.sendSeqNumber,
+          encapsulatedPackets: [{
+            reliability: 2,
+            hasSplit: 0,
+            messageIndex: this.messageIndex,
+            buffer: buffer
+          }]
+        });
+        debug("writing packet " + name);
+        debug(params);
+        this.sendSeqNumber++;
+    }
+    this.messageIndex++;
   }
 
   handleMessage(data)

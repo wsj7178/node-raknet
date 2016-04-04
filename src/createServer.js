@@ -23,12 +23,17 @@ function createServer(options) {
         mtuSize:1492
       }));
 
-    client.on("open_connection_request_2",packet =>
-      client.write("open_connection_reply_2",{ magic: 0,
-        serverID: [ 339724, -6627871 ],
-        clientAddress: { version: 4, address: client.address, port: client.port },
-        mtuSize: 1492,
-        serverSecurity: 0 }));
+    client.on("open_connection_request_2",packet => {
+      client.mtuSize=Math.min(Math.abs(packet.mtuSize), 1464);
+      client.write("open_connection_reply_2",
+        {
+          magic: 0,
+          serverID: [ 339724, -6627871 ],
+          clientAddress: { version: 4, address: client.address, port: client.port },
+          mtuSize: packet.mtuSize,
+          serverSecurity: 0
+        });
+    });
 
     client.on("client_connect",packet => {
       client.writeEncapsulated("server_handshake",{
