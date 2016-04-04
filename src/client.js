@@ -5,6 +5,9 @@ var debug = require('debug')("raknet");
 
 var createSerializer = require("./transforms/serializer").createSerializer;
 var createDeserializer = require("./transforms/serializer").createDeserializer;
+var split = require('split-buffer');
+
+const mtuSize=1426;
 
 class Client extends EventEmitter
 {
@@ -15,6 +18,7 @@ class Client extends EventEmitter
     this.port=port;
     this.parser=createDeserializer(true);
     this.serializer=createSerializer(true);
+    this.parserEncapsulated=createDeserializer(true);
     this.sendSeqNumber=0;
     this.setErrorHandling();
   }
@@ -47,6 +51,20 @@ class Client extends EventEmitter
       e.message = `Deserialization error for ${e.field} : ${e.message}`;
       this.emit('error',e);
     });
+
+
+    this.parserEncapsulated.on("error",(e) => {
+      let parts;
+      if(e.field) {
+        parts = e.field.split(".");
+        parts.shift();
+      }
+      else
+        parts=[];
+      e.field = parts.join(".");
+      e.message = `Deserialization error for ${e.field} : ${e.message}`;
+      this.emit('error',e);
+    });
   }
 
   setSocket(socket)
@@ -68,22 +86,17 @@ class Client extends EventEmitter
       this.emit('raw', parsed.buffer, parsed.metadata);
     };
 
+    this.parserEncapsulated.on("data",(parsed) => {
+      emitPacket(parsed);
+    });
+
+
     this.parser.on("data",(parsed) => {
       emitPacket(parsed);
       if(parsed.metadata.name.substr(0,11)=="data_packet")
       {
         var encapsulatedPackets=parsed.data.encapsulatedPackets;
-        encapsulatedPackets.forEach((encapsulatedPacket) => {
-          try {
-            var r = this.parser.parsePacketBuffer(encapsulatedPacket.buffer);
-            emitPacket(r);
-          }
-          catch(err) {
-            console.log(err.stack);
-            debug("customPacket",encapsulatedPacket.buffer);
-            this.emit("customPacket",encapsulatedPacket.buffer);
-          }
-        });
+        encapsulatedPackets.forEach((encapsulatedPacket) => this.parserEncapsulated.write(encapsulatedPacket.buffer));
         this.write("ack",{"packets":[{"one":1,"values":parsed.data.seqNumber}]})
       }
     });
@@ -99,24 +112,29 @@ class Client extends EventEmitter
 
   writeEncapsulated(name, params,priority) {
     priority=priority||4;
-    this.write("data_packet_"+priority,{
-      seqNumber: this.sendSeqNumber,
-      encapsulatedPackets:[{
-        reliability: 2,
-        hasSplit: 0,
-        identifierACK: undefined,
-        messageIndex: 0,
-        orderIndex: undefined,
-        orderChannel: undefined,
-        splitCount: undefined,
-        splitID: undefined,
-        splitIndex: undefined,
-        buffer:this.serializer.createPacketBuffer({ name, params })
-      }]
+    const buffer=this.serializer.createPacketBuffer({ name, params });
+    const buffers = split(buffer, mtuSize);
+
+    buffers.forEach(bufferPart => {
+      this.write("data_packet_"+priority,{
+        seqNumber: this.sendSeqNumber,
+        encapsulatedPackets:[{
+          reliability: 2,
+          hasSplit: 0,
+          identifierACK: undefined,
+          messageIndex: 0,
+          orderIndex: undefined,
+          orderChannel: undefined,
+          splitCount: undefined,
+          splitID: undefined,
+          splitIndex: undefined,
+          buffer:bufferPart
+        }]
+      });
+      debug("writing packet " + name);
+      debug(params);
+      this.sendSeqNumber++;
     });
-    debug("writing packet " + name);
-    debug(params);
-    this.sendSeqNumber++;
   }
 
   handleMessage(data)
