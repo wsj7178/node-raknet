@@ -1,3 +1,7 @@
+## 1.5.2
+
+* fix customPackets merging
+
 ## 1.5.1
 
 * put protocol.json in types to fit protodef standard json
