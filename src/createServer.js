@@ -13,6 +13,8 @@ function createServer(options) {
   var host = options.host || '0.0.0.0';
 
   var server = new Server();
+
+  server.name=options.name || "MCPE;A Minecraft server;45 45;0.0.1;0;20";
   
   server.on("connection", function (client) {
     client.on("open_connection_request_1",(packet) =>
@@ -51,7 +53,16 @@ function createServer(options) {
       client.writeEncapsulated("pong",{
         "pingID":packet.pingID
       })
-    })
+    });
+
+    client.on('unconnected_ping', function(packet) {
+      client.write('unconnected_pong', {
+        pingID: packet.pingID,
+        serverID: [ 339724, -6627871 ],
+        magic: 0,
+        serverName: server.name
+      });
+    });
   });
 
   server.listen(port, host);

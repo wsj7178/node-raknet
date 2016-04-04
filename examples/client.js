@@ -14,3 +14,7 @@ var client = raknet.createClient({
 client.on('connect', function() {
   console.info('connected');
 });
+
+client.on('error',function(err){
+  console.log(err);
+});
