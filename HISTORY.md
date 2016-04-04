@@ -1,3 +1,7 @@
+## 1.6.0
+
+* add customTypes
+
 ## 1.5.2
 
 * fix customPackets merging
