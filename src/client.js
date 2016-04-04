@@ -9,19 +9,22 @@ var ProtoDef = require('protodef').ProtoDef;
 var split = require('split-buffer');
 var Serializer = require('protodef').Serializer;
 var Parser = require('protodef').Parser;
+const merge=require("lodash.merge");
+
 
 class Client extends EventEmitter
 {
-  constructor(port,address)
+  constructor(port,address,customPackets)
   {
     super();
+    customPackets=customPackets||{};
     this.address=address;
     this.port=port;
     this.parser=createDeserializer(true);
     this.serializer=createSerializer(true);
     var proto = new ProtoDef();
     proto.addTypes(require('./datatypes/raknet'));
-    proto.addTypes(require('../data/protocol.json'));
+    proto.addTypes(merge(require('../data/protocol.json'),customPackets));
     this.encapsulatedPacketParser=new Parser(proto, 'encapsulated_packet');
     this.encapsulatedPacketSerializer=new Serializer(proto, 'encapsulated_packet');
     this.sendSeqNumber=0;

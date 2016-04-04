@@ -7,10 +7,11 @@ const Client = require("./client");
 
 class Server extends EventEmitter
 {
-  constructor()
+  constructor(customPackets)
   {
     super();
     this.ipPortToClient={};
+    this.customPackets=customPackets;
   }
 
   listen(port,address)
@@ -25,7 +26,7 @@ class Server extends EventEmitter
       let client;
       if(!this.ipPortToClient[ipPort])
       {
-        client=new Client(rinfo.port,rinfo.address);
+        client=new Client(rinfo.port,rinfo.address,this.customPackets);
         client.setSocket(this.socket);
         this.ipPortToClient[ipPort]=client;
         this.emit("connection",client);
