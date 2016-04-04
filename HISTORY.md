@@ -1,3 +1,7 @@
+## 1.6.1
+
+* fix customTypes
+
 ## 1.6.0
 
 * add customTypes
