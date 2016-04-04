@@ -1,3 +1,7 @@
+## 1.6.2
+
+* add login event
+
 ## 1.6.1
 
 * fix customTypes

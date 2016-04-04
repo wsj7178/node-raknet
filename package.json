@@ -1,6 +1,6 @@
 {
   "name": "raknet",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "UDP network library that follows the RakNet protocol for Node.js",
   "main": "index.js",
   "scripts": {
