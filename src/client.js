@@ -14,10 +14,11 @@ const merge=require("lodash.merge");
 
 class Client extends EventEmitter
 {
-  constructor(port,address,customPackets)
+  constructor(port,address,customPackets,customTypes)
   {
     super();
     customPackets=customPackets||{};
+    customTypes=customTypes||{};
     this.address=address;
     this.port=port;
     this.parser=createDeserializer(true);
@@ -25,6 +26,7 @@ class Client extends EventEmitter
     var proto = new ProtoDef();
     proto.addTypes(require('./datatypes/raknet'));
     proto.addTypes(merge(require('../data/protocol.json'),customPackets).types);
+    proto.addTypes(customTypes);
     this.encapsulatedPacketParser=new Parser(proto, 'encapsulated_packet');
     this.encapsulatedPacketSerializer=new Serializer(proto, 'encapsulated_packet');
     this.sendSeqNumber=0;

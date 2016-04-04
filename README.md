@@ -16,6 +16,8 @@ Create a client. options :
 * host
 * port
 * password (optional)
+* customPackets (optional)
+* customTypes : native protodef types (optional)
 
 ### createServer(options)
 
@@ -23,6 +25,8 @@ Create a server. options :
 * host
 * port
 * name (optional)
+* customPackets (optional)
+* customTypes : native protodef types (optional)
 
 ### createSerializer()
 

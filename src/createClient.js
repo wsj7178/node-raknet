@@ -14,8 +14,9 @@ function createClient(options) {
   var host = options.host || 'localhost';
   var password = options.password;
   var customPackets = options.customPackets || {};
+  var customTypes = options.customTypes || {};
 
-  var client = new Client(options.port,options.host,customPackets);
+  var client = new Client(options.port,options.host,customPackets,customTypes);
   var socket=dgram.createSocket({type: 'udp4'});
   socket.bind();
   socket.on("message",(data,rinfo) => {

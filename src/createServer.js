@@ -12,8 +12,9 @@ function createServer(options) {
 
   var host = options.host || '0.0.0.0';
   var customPackets = options.customPackets || {};
+  var customTypes = options.customTypes || {};
 
-  var server = new Server(customPackets);
+  var server = new Server(customPackets,customTypes);
 
   server.name=options.name || "MCPE;A Minecraft server;45 45;0.0.1;0;20";
   

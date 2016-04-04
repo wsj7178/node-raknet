@@ -7,11 +7,12 @@ const Client = require("./client");
 
 class Server extends EventEmitter
 {
-  constructor(customPackets)
+  constructor(customPackets,customTypes)
   {
     super();
     this.ipPortToClient={};
-    this.customPackets=customPackets;
+    this.customPackets=customPackets || {};
+    this.customTypes=customTypes || {};
   }
 
   listen(port,address)
