@@ -54,7 +54,7 @@ function createClient(options) {
         "sendPing":[0,43],
         "useSecurity":0,
         "password":new Buffer(options.password ? options.password : 0)
-      });
+      },{reliability:2});
     });
 
     client.on('server_handshake',() => {

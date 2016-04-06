@@ -34,6 +34,7 @@ class Client extends EventEmitter
     this.splitId=0;
     this.mtuSize=548;
     this.splitPackets=[];
+    this.channelIndex={0:0};
     this.setErrorHandling();
   }
 
@@ -130,27 +131,38 @@ class Client extends EventEmitter
     if(this.ended)
       return;
     debug("writing packet " + name);
-    debug(params);
+    debug(JSON.stringify(params));
     this.serializer.write({ name, params });
   }
 
-  writeEncapsulated(name, params,priority) {
-    priority=priority||4;
+  writeEncapsulated(name, params,options) {
+    options=options||{};
+    let  priority=options.priority||4;
+    let reliability=options.reliability||3;
+    let orderChannel=options.orderChannel||0;
     const buffer=this.encapsulatedPacketSerializer.createPacketBuffer({ name, params });
 
-    if(buffer.length>this.mtuSize) {
-      const buffers = split(buffer, this.mtuSize);
+    let messageIndex;
+    let orderIndex;
+    if([2,3,4,6,7].indexOf(reliability)!=-1)
+    {
+      messageIndex=this.messageIndex++;
+      if(reliability==3)
+        orderIndex=this.channelIndex[orderChannel]++;
+    }
+
+    if(buffer.length>this.mtuSize-20) {
+      const buffers = split(buffer, this.mtuSize-34);
 
       buffers.forEach((bufferPart, index) => {
         this.write("data_packet_" + priority, {
           seqNumber: this.sendSeqNumber,
           encapsulatedPackets: [{
-            reliability: 2,
+            reliability: reliability,
             hasSplit: 16,
-            identifierACK: undefined,
-            messageIndex: this.messageIndex,
-            orderIndex: undefined,
-            orderChannel: undefined,
+            messageIndex: index==0 ? messageIndex : this.messageIndex,
+            orderIndex: orderIndex,
+            orderChannel: orderChannel,
             splitCount: buffers.length,
             splitID: this.splitId,
             splitIndex: index,
@@ -158,8 +170,11 @@ class Client extends EventEmitter
           }]
         });
         debug("writing packet " + name);
-        debug(params);
+        debug(JSON.stringify(params));
         this.sendSeqNumber++;
+        if(index>0) {
+          this.messageIndex++;
+        }
       });
       this.splitId++;
       this.splitId = this.splitId % 65536;
@@ -170,15 +185,14 @@ class Client extends EventEmitter
         encapsulatedPackets: [{
           reliability: 2,
           hasSplit: 0,
-          messageIndex: this.messageIndex,
+          messageIndex: messageIndex,
           buffer: buffer
         }]
       });
       debug("writing packet " + name);
-      debug(params);
+      debug(JSON.stringify(params));
       this.sendSeqNumber++;
     }
-    this.messageIndex++;
   }
 
   handleMessage(data)

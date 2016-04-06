@@ -48,7 +48,7 @@ function createServer(options) {
         ],
         sendPing:[ 0, 73 ],
         sendPong:[ 0, 73 ]
-      },0)
+      },{priority:0})
     });
 
     client.on("client_handshake",packet => {
