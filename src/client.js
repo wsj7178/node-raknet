@@ -25,8 +25,8 @@ class Client extends EventEmitter
     this.serializer=createSerializer(true);
     var proto = new ProtoDef();
     proto.addTypes(require('./datatypes/raknet'));
-    proto.addTypes(merge(require('../data/protocol.json'),customPackets).types);
     proto.addTypes(customTypes);
+    proto.addTypes(merge(require('../data/protocol.json'),customPackets).types);
     this.encapsulatedPacketParser=new Parser(proto, 'encapsulated_packet');
     this.encapsulatedPacketSerializer=new Serializer(proto, 'encapsulated_packet');
     this.sendSeqNumber=0;
