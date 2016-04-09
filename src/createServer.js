@@ -7,8 +7,8 @@ function createServer(options) {
   var port = options.port != null ?
     options.port :
     options['server-port'] != null ?
-    options['server-port'] :
-    19132;
+      options['server-port'] :
+      19132;
 
   var host = options.host || '0.0.0.0';
   var customPackets = options.customPackets || {};
@@ -17,7 +17,7 @@ function createServer(options) {
   var server = new Server(customPackets,customTypes);
 
   server.name=options.name || "MCPE;A Minecraft server;45 45;0.0.1;0;20";
-  
+
   server.on("connection", function (client) {
     client.on("open_connection_request_1",(packet) =>
       client.write("open_connection_reply_1",{
@@ -33,19 +33,19 @@ function createServer(options) {
         {
           magic: 0,
           serverID: [ 339724, -6627871 ],
-          clientAddress: { version: 4, address: client.address, port: client.port },
+          clientAddress: { version: 4, address: client.address, port: /*client.port*/12345/*TODO fix this*/ },
           mtuSize: packet.mtuSize,
           serverSecurity: 0
         });
     });
 
     client.on("client_connect",packet => {
+      const addresses=[];
+      for(let i=0;i<10;i++) addresses.push({ version: 4, address: server.address, port: server.port });
       client.writeEncapsulated("server_handshake",{
-        clientAddress:{ version: 4, address: client.address, port: client.port },
+        clientAddress:{ version: 4, address: client.address, port: /*client.port*/12345/*TODO fix this*/ },
         serverSecurity:0,
-        systemAddresses:[
-          { version: 4, address: server.address, port: server.port }
-        ],
+        systemAddresses:addresses,
         sendPing:[ 0, 73 ],
         sendPong:[ 0, 73 ]
       },{priority:0})
