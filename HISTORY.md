@@ -1,3 +1,7 @@
+## 1.6.5
+
+* bypass port unbound error and correctly send 10 addresses
+
 ## 1.6.4
 
 * add customTypes before reading the .json
