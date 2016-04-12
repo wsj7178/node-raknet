@@ -19,6 +19,7 @@ Create a client. options :
 * customPackets (optional)
 * customTypes : native protodef types (optional)
 * clientID : a long representing the client id, default to `[339844,-1917040252]`
+* mtuSize : default to 1492
 
 ### createServer(options)
 

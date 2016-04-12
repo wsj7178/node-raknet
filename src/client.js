@@ -34,6 +34,7 @@ class Client extends EventEmitter
     this.splitId=0;
     this.mtuSize=548;
     this.splitPackets=[];
+    this.currentPing=[0,0];
     this.channelIndex={0:0};
     this.setErrorHandling();
   }

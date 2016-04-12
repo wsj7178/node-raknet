@@ -21,17 +21,21 @@ function createServer(options) {
   server.serverID=serverId;
   server.name=options.name || "MCPE;A Minecraft server;45 45;0.0.1;0;20";
 
+  const maxMtuSize=1464;
+
   server.on("connection", function (client) {
-    client.on("open_connection_request_1",(packet) =>
+    client.on("open_connection_request_1",(packet) => {
       client.write("open_connection_reply_1",{
         magic:0,
         serverID:server.serverID,
         serverSecurity:0,
-        mtuSize:1492
-      }));
+        mtuSize:packet.mtuSize.length+46
+      })
+    });
+
 
     client.on("open_connection_request_2",packet => {
-      client.mtuSize=Math.min(Math.abs(packet.mtuSize), 1464);
+      client.mtuSize=Math.min(Math.abs(packet.mtuSize), maxMtuSize);
       client.write("open_connection_reply_2",
         {
           magic: 0,
@@ -49,8 +53,8 @@ function createServer(options) {
         clientAddress:{ version: 4, address: client.address, port: client.port },
         serverSecurity:0,
         systemAddresses:addresses,
-        sendPing:[ 0, 73 ],
-        sendPong:[ 0, 73 ]
+        sendPing:packet.sendPing,
+        sendPong:[packet.sendPing[0],packet.sendPing[1]+1000]
       },{priority:0})
     });
 

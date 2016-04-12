@@ -17,6 +17,7 @@ function createClient(options) {
   const customTypes = options.customTypes || {};
   const username = options.username || "echo";
   const clientID= options.clientID || [339844,-1917040252];
+  const mtuSize = options.mtuSize || 1492;
 
   const client = new Client(port,host,customPackets,customTypes);
   client.clientID=clientID;
@@ -41,7 +42,7 @@ function createClient(options) {
     client.write('open_connection_request_1', {
       magic:0,
       protocol:6,
-      mtuSize:new Buffer(1446).fill(0)
+      mtuSize:new Buffer(mtuSize-46).fill(0)
     });
 
     client.on('open_connection_reply_1', packet => {
@@ -57,7 +58,7 @@ function createClient(options) {
     client.on('open_connection_reply_2',() => {
       client.writeEncapsulated('client_connect',{
         "clientID":client.clientID,
-        "sendPing":[0,43],
+        "sendPing":client.currentPing,
         "useSecurity":0,
         "password":new Buffer(password || 0)
       },{reliability:2});
