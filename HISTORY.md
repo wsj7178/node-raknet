@@ -1,3 +1,7 @@
+## 1.6.8
+
+* the port is an unsigned short
+
 ## 1.6.7
 
 * encapsulated packet read failure are real errors
