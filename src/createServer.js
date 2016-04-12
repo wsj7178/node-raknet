@@ -4,17 +4,18 @@ var Server = require('./server');
 
 function createServer(options) {
   options = options || {};
-  var port = options.port != null ?
+  const port = options.port != null ?
     options.port :
     options['server-port'] != null ?
       options['server-port'] :
       19132;
 
-  var host = options.host || '0.0.0.0';
-  var customPackets = options.customPackets || {};
-  var customTypes = options.customTypes || {};
+  const host = options.host || '0.0.0.0';
+  const customPackets = options.customPackets || {};
+  const customTypes = options.customTypes || {};
 
-  var server = new Server(customPackets,customTypes);
+
+  const server = new Server(customPackets,customTypes);
 
   server.name=options.name || "MCPE;A Minecraft server;45 45;0.0.1;0;20";
 
