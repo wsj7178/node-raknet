@@ -33,7 +33,7 @@ function createServer(options) {
         {
           magic: 0,
           serverID: [ 339724, -6627871 ],
-          clientAddress: { version: 4, address: client.address, port: /*client.port*/12345/*TODO fix this*/ },
+          clientAddress: { version: 4, address: client.address, port: client.port },
           mtuSize: packet.mtuSize,
           serverSecurity: 0
         });
@@ -43,7 +43,7 @@ function createServer(options) {
       const addresses=[];
       for(let i=0;i<10;i++) addresses.push({ version: 4, address: server.address, port: server.port });
       client.writeEncapsulated("server_handshake",{
-        clientAddress:{ version: 4, address: client.address, port: /*client.port*/12345/*TODO fix this*/ },
+        clientAddress:{ version: 4, address: client.address, port: client.port },
         serverSecurity:0,
         systemAddresses:addresses,
         sendPing:[ 0, 73 ],

@@ -61,7 +61,7 @@ function createClient(options) {
       client.writeEncapsulated('client_handshake',{
         serverAddress:{ version: 4, address: client.address, port: client.port },
         systemAddresses:[
-          { version: 4, address: client.socket.address().address, port: /*client.socket.address().port*/12345/*TODO fix this*/ }
+          { version: 4, address: client.socket.address().address, port: client.socket.address().port }
         ]
       });
       client.emit("login");
