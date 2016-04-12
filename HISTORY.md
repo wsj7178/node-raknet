@@ -1,3 +1,7 @@
+## 1.6.7
+
+* encapsulated packet read failure are real errors
+
 ## 1.6.6
 
 * fix reliability in non split packets
