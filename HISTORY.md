@@ -1,3 +1,7 @@
+## 1.6.6
+
+* fix reliability in non split packets
+
 ## 1.6.5
 
 * bypass port unbound error and correctly send 10 addresses
