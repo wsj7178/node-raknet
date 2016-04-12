@@ -18,6 +18,7 @@ Create a client. options :
 * password (optional)
 * customPackets (optional)
 * customTypes : native protodef types (optional)
+* clientID : a long representing the client id, default to `[339844,-1917040252]`
 
 ### createServer(options)
 
@@ -27,6 +28,7 @@ Create a server. options :
 * name (optional)
 * customPackets (optional)
 * customTypes : native protodef types (optional)
+* serverID : a long representing the server id, default to `[ 339724, -6627871 ]`
 
 ### createSerializer()
 

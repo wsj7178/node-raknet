@@ -13,17 +13,19 @@ function createServer(options) {
   const host = options.host || '0.0.0.0';
   const customPackets = options.customPackets || {};
   const customTypes = options.customTypes || {};
+  const serverId= options.serverID || [ 339724, -6627871 ];
 
 
   const server = new Server(customPackets,customTypes);
 
+  server.serverID=serverId;
   server.name=options.name || "MCPE;A Minecraft server;45 45;0.0.1;0;20";
 
   server.on("connection", function (client) {
     client.on("open_connection_request_1",(packet) =>
       client.write("open_connection_reply_1",{
         magic:0,
-        serverID:[ 339724, -6627871 ],
+        serverID:server.serverID,
         serverSecurity:0,
         mtuSize:1492
       }));
@@ -33,7 +35,7 @@ function createServer(options) {
       client.write("open_connection_reply_2",
         {
           magic: 0,
-          serverID: [ 339724, -6627871 ],
+          serverID: server.serverID,
           clientAddress: { version: 4, address: client.address, port: client.port },
           mtuSize: packet.mtuSize,
           serverSecurity: 0
@@ -65,7 +67,7 @@ function createServer(options) {
     client.on('unconnected_ping', function(packet) {
       client.write('unconnected_pong', {
         pingID: packet.pingID,
-        serverID: [ 339724, -6627871 ],
+        serverID: server.serverID,
         magic: 0,
         serverName: server.name
       });

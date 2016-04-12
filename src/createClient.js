@@ -16,8 +16,10 @@ function createClient(options) {
   const customPackets = options.customPackets || {};
   const customTypes = options.customTypes || {};
   const username = options.username || "echo";
+  const clientID= options.clientID || [339844,-1917040252];
 
   const client = new Client(port,host,customPackets,customTypes);
+  client.clientID=clientID;
   const socket=dgram.createSocket({type: 'udp4'});
   socket.bind();
   socket.on('message',(data,rinfo) => {
@@ -48,13 +50,13 @@ function createClient(options) {
         magic:0,
         serverAddress:{ version: 4, address: client.address, port: client.port },
         mtuSize:packet.mtuSize,
-        clientID:[ 339724, -6627870 ]
+        clientID:client.clientID
       });
     });
 
     client.on('open_connection_reply_2',() => {
       client.writeEncapsulated('client_connect',{
-        "clientID":[339844,-1917040252],
+        "clientID":client.clientID,
         "sendPing":[0,43],
         "useSecurity":0,
         "password":new Buffer(password || 0)
