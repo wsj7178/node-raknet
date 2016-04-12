@@ -183,9 +183,11 @@ class Client extends EventEmitter
       this.write("data_packet_" + priority, {
         seqNumber: this.sendSeqNumber,
         encapsulatedPackets: [{
-          reliability: 2,
+          reliability: reliability,
           hasSplit: 0,
           messageIndex: messageIndex,
+          orderIndex: orderIndex,
+          orderChannel: orderChannel,
           buffer: buffer
         }]
       });
