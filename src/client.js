@@ -121,9 +121,7 @@ class Client extends EventEmitter
       this.emitPacket(r);
     }
     catch(err) {
-      console.log("encapsulated error",err.stack);
-      debug("customPacket",buffer);
-      this.emit("customPacket",buffer);
+      this.emit("error",err);
     }
   }
 
