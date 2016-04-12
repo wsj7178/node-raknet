@@ -10,16 +10,20 @@ module.exports = createClient;
 
 function createClient(options) {
   assert.ok(options, "options is required");
-  var port = options.port || 19132;
-  var host = options.host || 'localhost';
-  var password = options.password;
-  var customPackets = options.customPackets || {};
-  var customTypes = options.customTypes || {};
+  const port = options.port || 19132;
+  const host = options.host || 'localhost';
+  const password = options.password;
+  const customPackets = options.customPackets || {};
+  const customTypes = options.customTypes || {};
+  const username = options.username || "echo";
 
-  var client = new Client(options.port,options.host,customPackets,customTypes);
-  var socket=dgram.createSocket({type: 'udp4'});
+  const client = new Client(port,host,customPackets,customTypes);
+  const socket=dgram.createSocket({type: 'udp4'});
   socket.bind();
-  socket.on("message",(data,rinfo) => {
+  socket.on('message',(data,rinfo) => {
+    client.address=rinfo.address;
+  });
+  socket.on("message",(data) => {
     client.handleMessage(data);
   });
   socket.on("listening",() => {
@@ -29,7 +33,7 @@ function createClient(options) {
   client.setSocket(socket);
 
   client.on("connect",onConnect);
-  client.username = options.username;
+  client.username = username;
 
   function onConnect() {
     client.write('open_connection_request_1', {
@@ -53,7 +57,7 @@ function createClient(options) {
         "clientID":[339844,-1917040252],
         "sendPing":[0,43],
         "useSecurity":0,
-        "password":new Buffer(options.password ? options.password : 0)
+        "password":new Buffer(password || 0)
       },{reliability:2});
     });
 
