@@ -1,3 +1,9 @@
+## 1.7.0
+
+* dns support
+* add clientId and serverID options
+* remove magic values
+
 ## 1.6.8
 
 * the port is an unsigned short
