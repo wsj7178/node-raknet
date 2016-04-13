@@ -134,8 +134,6 @@ class Client extends EventEmitter
   }
 
   write(name, params) {
-    if(this.ended)
-      return;
     debug("writing packet " + name);
     debug(JSON.stringify(params));
     this.serializer.write({ name, params });
