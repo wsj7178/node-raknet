@@ -1,3 +1,7 @@
+## 1.7.2
+
+* fix timer bug
+
 ## 1.7.1
 
 * handle client disconnection
