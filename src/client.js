@@ -36,7 +36,14 @@ class Client extends EventEmitter
     this.splitPackets=[];
     this.currentPing=[0,0];
     this.channelIndex={0:0};
+    this.ended=false;
     this.setErrorHandling();
+  }
+
+  end()
+  {
+    this.ended=true;
+    this.emit('end');
   }
 
   setErrorHandling()

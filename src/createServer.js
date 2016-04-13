@@ -14,7 +14,7 @@ function createServer(options) {
   const customPackets = options.customPackets || {};
   const customTypes = options.customTypes || {};
   const serverId= options.serverID || [ 339724, -6627871 ];
-
+  const kickTimeout = options.kickTimeout || 30 * 1000;
 
   const server = new Server(customPackets,customTypes);
 
@@ -24,6 +24,8 @@ function createServer(options) {
   const maxMtuSize=1464;
 
   server.on("connection", function (client) {
+    let kickTimeout=null;
+
     client.on("open_connection_request_1",(packet) => {
       client.write("open_connection_reply_1",{
         magic:0,
@@ -63,9 +65,12 @@ function createServer(options) {
     });
 
     client.on("ping",packet => {
+      if(kickTimeout)
+        clearTimeout(kickTimeout);
       client.writeEncapsulated("pong",{
         "pingID":packet.pingID
-      })
+      });
+      kickTimeout=setTimeout(() => client.end(),kickTimeout);
     });
 
     client.on('unconnected_ping', function(packet) {
@@ -76,6 +81,16 @@ function createServer(options) {
         serverName: server.name
       });
     });
+
+    client.on('client_disconnect',() => {
+      client.end();
+    });
+
+    client.on('end',() => {
+      if(kickTimeout)
+        clearTimeout(kickTimeout);
+    })
+
   });
 
   server.listen(port, host);

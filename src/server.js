@@ -34,7 +34,10 @@ class Server extends EventEmitter
       }
       else
         client=this.ipPortToClient[ipPort];
-      client.handleMessage(data);
+      if(!client.ended)
+        client.handleMessage(data);
+      else
+        delete this.ipPortToClient[ipPort];
     });
   }
 }
