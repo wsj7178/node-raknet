@@ -1,3 +1,7 @@
+## 1.7.1
+
+* handle client disconnection
+
 ## 1.7.0
 
 * dns support
