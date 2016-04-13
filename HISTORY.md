@@ -1,3 +1,7 @@
+## 1.7.3
+
+* fix bug with ended
+
 ## 1.7.2
 
 * fix timer bug
