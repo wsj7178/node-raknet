@@ -24,7 +24,7 @@ function createServer(options) {
   const maxMtuSize=1464;
 
   server.on("connection", function (client) {
-    let kickTimeout=null;
+    let kickTimer=null;
 
     client.on("open_connection_request_1",(packet) => {
       client.write("open_connection_reply_1",{
@@ -65,12 +65,12 @@ function createServer(options) {
     });
 
     client.on("ping",packet => {
-      if(kickTimeout)
-        clearTimeout(kickTimeout);
+      if(kickTimer)
+        clearTimeout(kickTimer);
       client.writeEncapsulated("pong",{
         "pingID":packet.pingID
       });
-      kickTimeout=setTimeout(() => client.end(),kickTimeout);
+      kickTimer=setTimeout(() => client.end(),kickTimeout);
     });
 
     client.on('unconnected_ping', function(packet) {
@@ -87,8 +87,8 @@ function createServer(options) {
     });
 
     client.on('end',() => {
-      if(kickTimeout)
-        clearTimeout(kickTimeout);
+      if(kickTimer)
+        clearTimeout(kickTimer);
     })
 
   });
