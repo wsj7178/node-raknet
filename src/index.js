@@ -4,5 +4,6 @@ module.exports = {
   createSpecialDeserializer: require('./transforms/special_serializer').createDeserializer,
   createSpecialSerializer: require('./transforms/special_serializer').createSerializer,
   createServer:require("./createServer"),
-  createClient:require("./createClient")
+  createClient:require("./createClient"),
+  protocol:require('./../data/protocol')
 }
