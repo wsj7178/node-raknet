@@ -1,3 +1,7 @@
+## 1.7.4
+
+* export protocol
+
 ## 1.7.3
 
 * fix bug with ended
