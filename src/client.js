@@ -139,12 +139,12 @@ class Client extends EventEmitter
     this.serializer.write({ name, params });
   }
 
-  writeEncapsulated(name, params,options) {
+
+  writeEncapsulatedRaw(buffer,options) {
     options=options||{};
     let  priority=options.priority||4;
     let reliability=options.reliability||3;
     let orderChannel=options.orderChannel||0;
-    const buffer=this.encapsulatedPacketSerializer.createPacketBuffer({ name, params });
 
     let messageIndex;
     let orderIndex;
@@ -173,8 +173,6 @@ class Client extends EventEmitter
             buffer: bufferPart
           }]
         });
-        debug("writing packet " + name);
-        debug(JSON.stringify(params));
         this.sendSeqNumber++;
         if(index>0) {
           this.messageIndex++;
@@ -195,10 +193,15 @@ class Client extends EventEmitter
           buffer: buffer
         }]
       });
-      debug("writing packet " + name);
-      debug(JSON.stringify(params));
       this.sendSeqNumber++;
     }
+  }
+
+  writeEncapsulated(name, params,options) {
+    debug("writing packet " + name);
+    debug(JSON.stringify(params));
+    const buffer=this.encapsulatedPacketSerializer.createPacketBuffer({ name, params });
+    this.writeEncapsulatedRaw(buffer,options);
   }
 
   handleMessage(data)
