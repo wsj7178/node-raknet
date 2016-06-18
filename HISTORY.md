@@ -1,3 +1,7 @@
+## 1.8.0
+
+* add writeEncapsulatedRaw
+
 ## 1.7.4
 
 * export protocol
