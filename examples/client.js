@@ -1,25 +1,24 @@
-var raknet = require('../');
+const RakNet = require('../')
 
-if(process.argv.length < 3 || process.argv.length > 5) {
-  console.log("Usage: node client.js <host> <port>");
-  process.exit(1);
+if (process.argv.length < 3 || process.argv.length > 5) {
+  console.log(`Usage: ${process.argv[0]} ${process.argv[1]} <host> <port>`)
+  process.exit(1)
 }
 
-var client = raknet.createClient({
+const client = RakNet.createClient({
   host: process.argv[2],
   port: parseInt(process.argv[3]),
-  password: "Rumpelstiltskin"
-});
+  password: 'Rumpelstiltskin' // password used in RakNet chat example
+})
 
-client.on('connect', function() {
-  console.info('connected');
-});
+client.on('connect', function () {
+  console.info('connected')
+})
 
+client.on('login', () => {
+  console.log('login')
+})
 
-client.on("login",() => {
-  console.log("login");
-});
-
-client.on('error',function(err){
-  console.log(err);
-});
+client.on('error', function (err) {
+  console.log(err)
+})

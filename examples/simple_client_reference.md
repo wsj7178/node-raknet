@@ -12,6 +12,5 @@ Testing procedure:
 
 ## Run it
 
-Simply run ./server and node client.js, give the right host and port.
-Same idea for ./client and node server.js
-
+Simply run `./server` and `node client.js`, give the right host and port.
+Same idea for `./client` and `node server.js`
