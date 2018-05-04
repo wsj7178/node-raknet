@@ -12,11 +12,11 @@ const client = RakNet.createClient({
 })
 
 client.on('connect', function () {
-  console.info('connected')
+  console.info('Connected')
 })
 
 client.on('login', () => {
-  console.log('login')
+  console.log('Logged in')
 })
 
 client.on('error', function (err) {
