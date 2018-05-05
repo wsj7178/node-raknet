@@ -27,7 +27,7 @@ describe('Client', () => {
     })
   })
 
-  it('can connect', (done) => {
-    client.on('connect', done)
+  it('can login', (done) => {
+    client.on('login', done)
   })
 })
