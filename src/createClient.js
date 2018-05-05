@@ -62,7 +62,6 @@ function createClient (options) {
     client.on('server_handshake', () => {
       const address = { version: 4, address: client.socket.address().address, port: client.socket.address().port }
 
-
       client.writeEncapsulated('client_handshake', {
         serverAddress: { version: 4, address: client.address, port: client.port },
         systemAddresses: Array.apply(null, {length: 10}).map(() => address)

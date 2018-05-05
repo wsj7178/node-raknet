@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 const RakNet = require('../')
 
 const HOST = '127.0.0.1'
@@ -8,7 +10,7 @@ describe('Client', () => {
   let server
 
   beforeAll(() => {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       // Create the server
       server = RakNet.createServer({
         host: HOST,
@@ -25,6 +27,11 @@ describe('Client', () => {
         resolve()
       })
     })
+  })
+
+  afterAll(() => {
+    client.socket.close()
+    server.socket.close()
   })
 
   it('can login', (done) => {

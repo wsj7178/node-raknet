@@ -4,6 +4,7 @@
   "description": "RakNet implementation in JavaScript for Node",
   "main": "index.js",
   "scripts": {
+    "lint": "standard **/*.js",
     "test": "jest --runInBand"
   },
   "keywords": [
@@ -33,6 +34,7 @@
   },
   "homepage": "https://github.com/mhsjlw/node-raknet#readme",
   "devDependencies": {
-    "jest": "^22.4.3"
+    "jest": "^22.4.3",
+    "standard": "^11.0.1"
   }
 }
