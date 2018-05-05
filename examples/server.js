@@ -10,7 +10,7 @@ const server = RakNet.createServer({
   port: parseInt(process.argv[3])
 })
 
-server.socket.on('listening', () => {
+server.on('listening', () => {
   console.log(`Listening on ${server.port}`)
 })
 

@@ -30,8 +30,8 @@ describe('Client', () => {
   })
 
   afterAll(() => {
-    client.socket.close()
-    server.socket.close()
+    client.close()
+    server.close()
   })
 
   it('can login', (done) => {

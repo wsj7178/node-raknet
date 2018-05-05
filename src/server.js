@@ -12,11 +12,23 @@ class Server extends EventEmitter {
     this.customTypes = customTypes || {}
   }
 
+  close () {
+    this.socket.close()
+  }
+
   listen (port, address) {
     this.address = address
     this.port = port
     this.socket = dgram.createSocket({ type: 'udp4' })
     this.socket.bind(this.port, this.address)
+
+    this.socket.on('listening', () => {
+      this.emit('listening')
+    })
+
+    this.socket.on('error', (e) => {
+      this.emit('error', e)
+    })
 
     this.socket.on('message', (data, { port, address }) => {
       const ipPort = `${address}:${port}`

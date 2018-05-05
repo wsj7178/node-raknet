@@ -37,6 +37,10 @@ class Client extends EventEmitter {
     this.setErrorHandling()
   }
 
+  close () {
+    this.socket.close()
+  }
+
   end () {
     this.ended = true
     this.emit('end')
