@@ -13,7 +13,9 @@
   ],
   "author": "mhsjlw",
   "contributors": [
-    "rom1504 <romain.rom1@gmail.com>"
+    "rom1504 <romain.rom1@gmail.com>",
+    "mhsjlw",
+    "wsj7178 <wsj7178@gmail.com>"
   ],
   "license": "MIT",
   "dependencies": {
